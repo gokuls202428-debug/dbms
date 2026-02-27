@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DBMS QUIZ  / IT 2ND YR--CAHCET</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        body { background: #050505; color: #e0e0e0; font-family: 'JetBrains+Mono', monospace; overflow-x: hidden; }
+        
+        /* Home Button */
+        .home-btn { position: fixed; top: 15px; left: 15px; z-index: 100; background: #1f2937; color: white; padding: 8px 16px; border-radius: 6px; font-weight: bold; border: 1px solid #374151; cursor: pointer; transition: 0.2s; }
+        .home-btn:hover { background: #374151; border-color: #22d3ee; }
+
+        /* Wheel */
+        #wheel-canvas { transition: transform 4s cubic-bezier(0.1, 0, 0, 1); filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.4)); }
+        .wheel-pointer-top { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); z-index: 50; width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #22d3ee; }
+
+        /* Color Trap */
+        .color-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin: 20px auto; max-width: 400px; }
+        .color-box { width: 150px; height: 120px; border-radius: 12px; border: 4px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 900; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); transition: background-color 0.2s ease, transform 0.1s ease; cursor: pointer; text-align: center; padding: 10px; }
+        .color-box:hover { transform: scale(1.05); border-color: #fff; }
+        @keyframes box-shuffle { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(3px, -3px); } 75% { transform: translate(-3px, 3px); } }
+        .shuffling { animation: box-shuffle 0.5s ease-in-out infinite; }
+        .correct-box { border-color: #10b981 !important; box-shadow: 0 0 20px #10b981; animation: none; transform: scale(1.1); }
+        @keyframes flash-red { 0%, 100% { border-color: #333; } 50% { border-color: #ef4444; } }
+        .wrong-box { animation: flash-red 0.3s ease-in-out; }
+
+        .progress-bar { transition: width 1s linear; height: 4px; background: #22d3ee; }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+
+        /* Emojis */
+        @keyframes float-up { 0% { transform: translateY(100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; } }
+        .emoji-float { position: fixed; font-size: 3rem; animation: float-up linear infinite; z-index: 10; pointer-events: none; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+<button onclick="location.reload()" class="home-btn">🏠 HOME</button>
+
+<div class="w-full max-w-3xl bg-zinc-900 p-8 rounded-xl border border-zinc-800 shadow-2xl relative z-20">
+    
+    <div id="header" class="hidden flex justify-between items-center mb-6 border-b border-zinc-700 pb-3">
+        <div><span class="text-[10px] text-zinc-500 uppercase">User</span><br><span id="display-name" class="text-cyan-400 font-bold"></span></div>
+        <div class="text-right"><span class="text-[10px] text-zinc-500 uppercase">Total Score</span><br><span id="display-score" class="text-yellow-500 font-bold">000</span></div>
+    </div>
+
+    <div id="welcomeView" class="text-center">
+        <h1 class="text-4xl mb-6 text-cyan-400 font-bold uppercase tracking-tight">DATA BASE MANAGEMENT SYSTEM</h1>
+        <p class="mb-8 text-zinc-400">Database Management Systems | Creative Quiz </p>
+        <button onclick="showLogin()" class="bg-cyan-600 hover:bg-cyan-500 text-black font-bold p-4 rounded uppercase tracking-widest w-full">Continue to Login -></button>
+        <p class="text-[12px] text-zinc-500 mt-6 tracking-widest uppercase font-bold text-center">SITE PREPARED BY GOKS..</p>
+    </div>
+
+    <div id="login" class="hidden">
+        <h1 class="text-3xl mb-6 text-center text-cyan-400 font-bold uppercase">LOGIN</h1>
+        <div class="flex gap-4 mb-6">
+            <button onclick="switchLoginType('student')" id="btn-student" class="flex-1 bg-cyan-600 text-black font-bold p-3 rounded">Student</button>
+            <button onclick="switchLoginType('admin')" id="btn-admin" class="flex-1 bg-zinc-700 text-zinc-400 font-bold p-3 rounded">Admin</button>
+        </div>
+        <div id="studentForm" class="space-y-4">
+            <input id="roll" placeholder="ROLL NUMBER" class="w-full p-3 bg-black border border-zinc-800 rounded outline-none" oninput="validateRoll()">
+            <input id="name" placeholder="FULL NAME" class="w-full p-3 bg-black border border-zinc-800 rounded outline-none" oninput="validateName()">
+            <input type="date" id="dob" class="w-full p-3 bg-black border border-zinc-800 rounded outline-none text-zinc-400">
+            <button onclick="startGame()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-black font-bold p-4 rounded uppercase">Initialize Session</button>
+        </div>
+        <div id="adminForm" class="space-y-4 hidden">
+            <input id="adminPassword" type="password" placeholder="ADMIN PASSWORD" class="w-full p-3 bg-black border border-zinc-800 rounded outline-none">
+            <button onclick="loginAdmin()" class="w-full bg-cyan-600 text-black font-bold p-4 rounded uppercase">Access Dashboard</button>
+        </div>
+        <p class="text-[12px] text-zinc-500 mt-6 text-center tracking-widest uppercase font-bold">SITE PREPARED BY GOKS..</p>
+    </div>
+
+    <div id="wheelView" class="hidden text-center">
+        <div id="spinResult" class="text-cyan-400 font-bold mb-4 h-6"></div>
+        <div class="relative inline-block mb-10 mt-6">
+            <div class="wheel-pointer-top"></div>
+            <canvas id="wheel-canvas" width="300" height="300"></canvas>
+        </div>
+        <button id="spin-btn" onclick="executeSpin()" class="bg-white text-black font-bold p-4 w-full rounded uppercase">Execute Spin</button>
+    </div>
+
+    <div id="modeScreen" class="hidden fixed inset-0 bg-black bg-opacity-95 flex flex-col items-center justify-center z-50">
+        <div id="modeScreenText" class="text-5xl text-cyan-400 font-bold uppercase tracking-tighter mb-6 text-center px-4"></div>
+        <div id="modeCountdown" class="text-7xl text-yellow-500 font-black">3</div>
+    </div>
+
+    <div id="quizView" class="hidden">
+        <div class="flex justify-between items-center mb-2">
+            <h2 id="modeTitle" class="text-cyan-400 font-bold uppercase"></h2>
+            <span id="qTimer" class="text-yellow-500 font-bold text-xl"></span>
+        </div>
+        <div id="progress-container" class="w-full bg-zinc-800 h-1 mb-6 rounded-full overflow-hidden"><div id="qProgress" class="progress-bar w-0"></div></div>
+        <p id="qCounter" class="text-[12px] text-zinc-500 mb-2 font-bold tracking-widest uppercase"></p>
+        <h3 id="question" class="text-xl font-bold mb-4 text-center min-h-[60px] flex items-center justify-center"></h3>
+        <div id="roast-msg" class="hidden text-center text-xl font-black mb-4 h-8 tracking-wide"></div>
+        <div id="options"></div>
+    </div>
+
+    <div id="feedbackView" class="hidden space-y-6 text-center">
+        <h2 class="text-cyan-400 text-2xl font-bold uppercase">Session Feedback</h2>
+        <textarea id="feedbackText" placeholder="Enter comments about the quiz..." class="w-full bg-black border border-zinc-800 p-3 rounded h-24 outline-none focus:border-cyan-500"></textarea>
+        <button id="final-submit" onclick="submitFeedback()" class="w-full bg-cyan-600 text-black font-bold p-4 rounded uppercase">Submit Data</button>
+        <p class="text-[12px] text-zinc-500 mt-6 text-center tracking-widest uppercase font-bold">SITE PREPARED BY GOKS...</p>
+    </div>
+
+    <div id="resultView" class="hidden text-center space-y-6">
+        <h1 class="text-yellow-400 text-5xl font-black uppercase">Final Score</h1>
+        <h2 id="resultMsg" class="text-2xl text-cyan-400 font-bold mb-4"></h2>
+        <div class="bg-black p-10 rounded-xl border border-zinc-800"><p id="finalScore" class="text-7xl font-bold text-white"></p></div>
+    </div>
+</div>
+
+<script>
+// Anti-Cheat System -> Moves to Feedback on 2nd violation
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden && state.name !== "" && !document.getElementById("quizView").classList.contains("hidden")) {
+        state.tabSwitches++;
+        if (state.tabSwitches === 1) {
+            alert("WARNING: Switching tabs is not allowed! Do it again and your test will end immediately.");
+        } else if (state.tabSwitches >= 2) {
+            alert("DISQUALIFIED: You switched tabs multiple times. Moving to Feedback page.");
+            showFeedback();
+        }
+    }
+});
+
+// Array Shuffler
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+const users = {
+    "24501":"AADHAM SHARIEF H", "24502":"ABDUL NAEEM", "24503":"ABDUL RAHEEM I", "24504":"ABISHAK K", "24505":"AFFAN BASHA A", "24506":"ALMIRA ZAINAB N", 
+    "24507":"ANGELPRIYA A", "24508":"ASIF RIHAN A", "24509":"ATHAHAR A", "24510":"AYISHA PARVEEN H", "24511":"AYSHA SIDDIKA J", "24512":"BHUVANA A", "24513":
+    "DEEPAK RAJ KANNAN S", "24514":"DEEPTHIKA K", 
+    "24515":"DHARSHINI G", "24516":"DHILIP B", "24517":"DHILIP K", "24518":"DHIYABHARATHI V", "24519":"DINESH KARTHICK B", "24520":"GOKUL S",
+     "24521":"GOPALA KRISHNAN S", "24522":"GOPIKA V", "24523":"HARINI R", "24524":"JAANEESHWARAN MURALI KRISHNAN", "24525":"JAISURYA D", "24526":"JAYAKABEELSH K", 
+     "24527":"KABILAN V", "24528":"KARTHI A", "24529":"LATHIKA V", "24530":"LEENA S", "24531":"LIKITHA SOWJANYA B G", "24532":"LUBNAPARVEEN N", "24533":"MANJU R", 
+     "24534":"MANJUSREE G", "24535":"MOHAMED TUFAIL D", "24536":"MOHAMMAD SAALIM H", "24537":"MOHAMMED AFHAAN N", "24538":"MOHAMMED AYMAN A", "24539":"MOHAMMED IBRAHIM M",
+      "24540":"MOHAMMED IBRAHIM M", "24541":"MOHAMMED KHUZAIMA T", "24542":"MOHAMMED MUBARAK M", "24543":"MOHAMMED MUSSAWIR T", "24544":"MOHAMMED SAQUE N", "24545":"MOHAMMED SHAFEE V",
+       "24546":"MOHAMMED SHUJA M", "24547":"MOHAMMED UMAISE L", "24548":"MOHAMMED YAKOUB MUSAAB T M", "24549":"MONESH RAJ R", "24550":"MUKESH KANNAN V M", "24551":"NANDHINI P",
+        "24552":"NARESH V", "24553":"NARESH KANNA K", "24554":"NAZIRA M", "24555":"NETHRA V", "24556":"PAVITHRA R", "24557":"POOVITHA P", "24558":"PREETHISH S", "24559":"RAKSHITHA S", 
+        "24560":"RISWAN A", "24561":"RITHEESH R", "24562":"RITHIKASRI A", "24563":"RUBANKUMAR V", "24564":"SAALIM KHAN K", "24565":"SANGAVI S", "24566":"SANJAY G", "24567":"SANTHA KUMAR S",
+         "24568":"SANTHOSH M", "24569":"SARAN L", "24570":"SHAIK HAMATH A", "24571":"SHEFIYA G", "24572":"SRIMATHI S", "24573":"SRIVARSHINI M", "24574":"SYED NADEEM K", "24575":"THAHIR S", "24576":"THILAK KUMAR S",
+          "24577":"UDHAYARANI B M", "24578":"UMAIR AHAMED A", "24579":"VEENA K", "24580":"VETHANTHA NITHI B", "24581":"VIGNESH K", "24582":"VINITHA V", "24583":"VISHAL S", "24584":"YOGALAKSHMI R", "24585":"ZAHID KHAN A", 
+          "24586":"SUDHAKAR V.S", "24587":"SHARMILA", "24588":"KARTHIKEYAN"
+};
+
+const goodRoasts = [
+    "Big brain energy!", "Not bad for a human.", "I'm mildly impressed.", "You actually read the syllabus!", 
+    "Wow, you might actually pass.", "Einstein is shaking in his grave.", "Did you Google that or are you just smart?", 
+    "A+ for effort, nerd.", "Okay, show-off!", "My circuits are pleased.", "Flawless victory.", 
+    "Is this ChatGPT answering?", "You must be the teacher's pet.", "Impressive... for a carbon-based lifeform.", 
+    "I bow to your database supremacy."
+];
+
+const badRoasts = [
+    "Did you even read the question?", "My grandma codes better than you.", "Error 404: Brain not found.", 
+    "Even a potato could guess that.", "Please tell me you misclicked.", "I weep for your GPA.", 
+    "Are you actively trying to fail?", "My RAM just short-circuited from that answer.", "That was physically painful to process.", 
+    "You're the reason we have warning labels.", "I've seen random number generators guess better.", 
+    "Did your cat walk on the keyboard?", "Just drop out now, save the instuition.", "Even a JOIN operation can't fix your logic.", 
+    "NULL value detected in your head."
+];
+
+let questionBank = {
+    ROAST: [
+        {q: "In ER diagrams, how is a weak entity represented?", o:["Double Rectangle", "Dashed Rectangle", "Diamond"], a:"Double Rectangle"},
+        {q: "Which algebra operation combines tuples where a condition is met?", o:["Theta Join", "Cartesian Product", "Set Difference"], a:"Theta Join"},
+        {q: "If X->Y and Y->Z, then X->Z is an example of?", o:["Transitive Dependency", "Partial Dependency", "Multi-valued Dependency"], a:"Transitive Dependency"},
+        {q: "What is the main goal of Non-loss Decomposition?", o:["Recover original relation via join", "Reduce database size", "Increase query speed"], a:"Recover original relation via join"},
+        {q: "Which normal form handles Join Dependencies?", o:["5NF", "4NF", "BCNF"], a:"5NF"},
+        {q: "Which normal form is a stricter version of 3NF?", o:["BCNF", "4NF", "2NF"], a:"BCNF"},
+        {q: "Multi-valued dependencies are eliminated in?", o:["4NF", "3NF", "2NF"], a:"4NF"},
+        {q: "Which property ensures a transaction is completely done or not done at all?", o:["Atomicity", "Isolation", "Durability"], a:"Atomicity"},
+        {q: "What component handles concurrent access to the database?", o:["Concurrency Control Manager", "Buffer Manager", "Storage Manager"], a:"Concurrency Control Manager"},
+        {q: "Which anomaly involves reading uncommitted data?", o:["Dirty Read", "Phantom Read", "Lost Update"], a:"Dirty Read"},
+        {q: "Which clause groups records into summary rows?", o:["GROUP BY", "ORDER BY", "HAVING"], a:"GROUP BY"},
+        {q: "What does the ACID acronym stand for?", o:["Atomicity, Consistency, Isolation, Durability", "Accuracy, Control, Integration, Data", "Automated, Consistent, Indexed, Dynamic"], a:"Atomicity, Consistency, Isolation, Durability"}
+    ],
+    COLOR_TRAP: [
+        {q: "What does DB stand for in DBMS?", target: "DATABASE", names: ["DATABASE", "DATABANK", "DATABYTE", "DATABLOCK"]},
+        {q: "Which key uniquely identifies a record?", target: "PRIMARY KEY", names: ["PRIMARY KEY", "FOREIGN KEY", "SUPER KEY", "CANDIDATE KEY"]},
+        {q: "What is 'data about data' called?", target: "METADATA", names: ["METADATA", "TABLE", "SCHEMA", "RECORD"]},
+        {q: "Which SQL command adds new data?", target: "INSERT", names: ["INSERT", "ADD", "UPDATE", "CREATE"]},
+        {q: "Which of these is a Database software?", target: "MYSQL", names: ["MYSQL", "PYTHON", "HTML", "MS WORD"]},
+        {q: "What does a row in a table represent?", target: "RECORD", names: ["RECORD", "FIELD", "ATTRIBUTE", "COLUMN"]},
+        {q: "Which command deletes a table completely?", target: "DROP", names: ["DROP", "DELETE", "REMOVE", "ERASE"]},
+        {q: "What does SQL stand for?", target: "STRUCTURED QUERY LANGUAGE", names: ["STRUCTURED QUERY LANGUAGE", "STANDARD QUERY LANGUAGE", "SIMPLE QUERY LANGUAGE", "SYSTEM QUERY LOGIC"]},
+        {q: "Which command modifies existing data?", target: "UPDATE", names: ["UPDATE", "ALTER", "CHANGE", "MODIFY"]},
+        {q: "Which command removes all rows but keeps structure?", target: "TRUNCATE", names: ["TRUNCATE", "DROP", "DELETE", "REMOVE"]},
+        {q: "What establishes a link between two tables?", target: "FOREIGN KEY", names: ["FOREIGN KEY", "PRIMARY KEY", "UNIQUE KEY", "LINK KEY"]},
+        {q: "Which operation selects specific rows?", target: "SELECT", names: ["SELECT", "PROJECT", "JOIN", "INTERSECT"]},
+        {q: "What represents an entity in an ER Diagram?", target: "RECTANGLE", names: ["RECTANGLE", "OVAL", "DIAMOND", "LINE"]},
+        {q: "What represents an attribute in an ER Diagram?", target: "OVAL", names: ["OVAL", "RECTANGLE", "DIAMOND", "SQUARE"]},
+        {q: "What represents a relationship in an ER Diagram?", target: "DIAMOND", names: ["DIAMOND", "RECTANGLE", "OVAL", "CIRCLE"]},
+        {q: "Which NF eliminates partial dependency?", target: "2NF", names: ["2NF", "1NF", "3NF", "BCNF"]},
+   
+    ],
+    RAPID_FIRE: [
+        {q: "What defines the structure of a database?", o:["Schema", "Instance", "View"], a:"Schema"},
+        {q: "Which key uniquely identifies a tuple?", o:["Primary Key", "Foreign Key", "Alternate Key"], a:"Primary Key"},
+        {q: "Which is NOT a standard data model?", o:["Network", "Relational", "Hyper-link"], a:"Hyper-link"},
+        {q: "SQL stands for?", o:["Structured Query Language", "Sequential Query Language", "Standard Query Language"], a:"Structured Query Language"},
+        {q: "Which normal form eliminates partial dependencies?", o:["2NF", "1NF", "3NF"], a:"2NF"},
+        {q: "Which normal form deals with multi-valued dependencies?", o:["4NF", "BCNF", "5NF"], a:"4NF"},
+        {q: "E-R stands for?", o:["Entity-Relationship", "Entity-Relational", "Entity-Record"], a:"Entity-Relationship"},
+        {q: "Which represents an entity in an ER diagram?", o:["Rectangle", "Oval", "Diamond"], a:"Rectangle"},
+        {q: "What represents a relationship in an ER diagram?", o:["Diamond", "Rectangle", "Oval"], a:"Diamond"},
+        {q: "What represents attributes in an ER diagram?", o:["Oval", "Diamond", "Rectangle"], a:"Oval"},
+        {q: "Which dependency is removed in 3NF?", o:["Transitive", "Partial", "Multi-valued"], a:"Transitive"},
+        {q: "A primary key combined with another attribute forms a?", o:["Composite Key", "Foreign Key", "Candidate Key"], a:"Composite Key"},
+        {q: "Which algebra operation selects rows?", o:["Select", "Project", "Cartesian Product"], a:"Select"},
+        {q: "Which algebra operation selects columns?", o:["Project", "Select", "Join"], a:"Project"},
+        {q: "Which normal form is a stricter version of 3NF?", o:["BCNF", "4NF", "2NF"], a:"BCNF"},
+        {q: "Embedded SQL is used to?", o:["Use SQL in host languages", "Create dynamic queries", "Connect to databases"], a:"Use SQL in host languages"},
+        {q: "What ensures a decomposition is valid?", o:["Non-loss decomposition", "Lossy decomposition", "Dependency loss"], a:"Non-loss decomposition"},
+        {q: "Which concept maps ER to Relational?", o:["ER-to-Relational Mapping", "Schema generation", "Normalization"], a:"ER-to-Relational Mapping"},
+        {q: "What does DDL define?", o:["Database Schema", "Data Values", "User Permissions"], a:"Database Schema"},
+        {q: "Which is an advanced SQL feature?", o:["Triggers", "SELECT", "INSERT"], a:"Triggers"},
+        {q: "What is the lowest level of data abstraction?", o:["Physical", "Logical", "View"], a:"Physical"},
+        {q: "What concept preserves functional dependencies?", o:["Dependency Preservation", "Lossless Join", "Normalization"], a:"Dependency Preservation"},
+        {q: "Join Dependencies are addressed in which Normal Form?", o:["5NF", "4NF", "BCNF"], a:"5NF"},
+        {q: "Dynamic SQL is constructed at?", o:["Runtime", "Compile time", "Design time"], a:"Runtime"},
+        {q: "A foreign key references a?", o:["Primary Key", "Candidate Key", "Super Key"], a:"Primary Key"},
+        {q: "What does DML stand for?", o:["Data Manipulation Language", "Data Model Logic", "Database Mapping Link"], a:"Data Manipulation Language"},
+        {q: "What is the Cartesian Product symbol?", o:["X", "π", "σ"], a:"X"},
+        // 20 Additional DBMS Rapid Fire Questions
+        {q: "Which of the following is a DCL command?", o:["GRANT", "INSERT", "DROP"], a:"GRANT"},
+        {q: "What does TCL stand for?", o:["Transaction Control Language", "Table Control Logic", "Transmission Command Link"], a:"Transaction Control Language"},
+        {q: "Which command is used to remove a view?", o:["DROP VIEW", "DELETE VIEW", "REMOVE VIEW"], a:"DROP VIEW"},
+        {q: "What is a characteristic of a Primary Key?", o:["Cannot be NULL", "Can have duplicates", "Can be multiple per table"], a:"Cannot be NULL"},
+        {q: "Which operator is used for pattern matching in SQL?", o:["LIKE", "MATCH", "EQUALS"], a:"LIKE"},
+        {q: "What does the '%' wildcard represent in SQL?", o:["Zero or more characters", "Exactly one character", "A numeric value"], a:"Zero or more characters"},
+        {q: "What does the '_' wildcard represent in SQL?", o:["Exactly one character", "Zero characters", "Any string"], a:"Exactly one character"},
+        {q: "Which SQL keyword is used to sort the result-set?", o:["ORDER BY", "SORT BY", "GROUP BY"], a:"ORDER BY"},
+        {q: "How do you select all columns from a table named 'Users'?", o:["SELECT * FROM Users", "SELECT ALL FROM Users", "GET * FROM Users"], a:"SELECT * FROM Users"},
+        {q: "Which SQL function returns the number of rows?", o:["COUNT()", "SUM()", "MAX()"], a:"COUNT()"},
+        {q: "Which SQL function returns the highest value?", o:["MAX()", "HIGH()", "TOP()"], a:"MAX()"},
+        {q: "What is the purpose of the UNIQUE constraint?", o:["Ensures all values are different", "Ensures values are not null", "Links two tables"], a:"Ensures all values are different"},
+        {q: "What does a LEFT JOIN return?", o:["All records from the left table", "Only matching records", "All records from the right table"], a:"All records from the left table"},
+        {q: "Which SQL statement is used to extract data from a database?", o:["SELECT", "EXTRACT", "PULL"], a:"SELECT"},
+        {q: "Which constraint ensures a column cannot have a NULL value?", o:["NOT NULL", "NO NULL", "UNIQUE"], a:"NOT NULL"},
+        {q: "What is an index used for?", o:["To speed up data retrieval", "To secure data", "To normalize tables"], a:"To speed up data retrieval"},
+        {q: "What does DBA stand for?", o:["Database Administrator", "Database Analyst", "Data Backup Agent"], a:"Database Administrator"},
+        {q: "In Relational Algebra, what does Pi (π) do?", o:["Selects columns", "Selects rows", "Joins tables"], a:"Selects columns"},
+        {q: "In Relational Algebra, what does Sigma (σ) do?", o:["Selects rows", "Selects columns", "Cartesian product"], a:"Selects rows"},
+        {q: "Which command is used to add a new column to a table?", o:["ALTER TABLE", "UPDATE TABLE", "MODIFY TABLE"], a:"ALTER TABLE"}
+    ]
+};
+
+let state = { 
+    name: "", score: 0, modeScores: { PUZZLE: 0, ROAST: 0, RAPID_FIRE: 0, COLOR_TRAP: 0 }, 
+    modes: ["ROAST", "RAPID_FIRE", "COLOR_TRAP"], done: {}, qIdx: 0, qTime: 35, 
+    rapidTimeRemaining: 150, rapidQuestionStartTime: 150, tabSwitches: 0,
+    isAnswerLocked: false
+};
+
+function validateRoll() { let r = document.getElementById("roll").value; document.getElementById("name").value = users[r] || ""; }
+function validateName() { let n = document.getElementById("name").value.toUpperCase(); let rId = Object.keys(users).find(k => users[k] === n); if(rId) document.getElementById("roll").value = rId; }
+function switchLoginType(t) { document.getElementById("studentForm").classList.toggle("hidden", t==='admin'); document.getElementById("adminForm").classList.toggle("hidden", t==='student'); }
+function showLogin() { document.getElementById("welcomeView").classList.add("hidden"); document.getElementById("login").classList.remove("hidden"); }
+
+function loginAdmin() {
+    if (document.getElementById("adminPassword").value === "seen") {
+        window.open("https://docs.google.com/spreadsheets/d/1rQ04oqqVYxvXKliQTNRqjP-a5FHf_lXOVmBh0oYWATM/edit?pli=1&gid=2122954543#gid=2122954543", "_blank");
+    } else alert("Invalid Password");
+}
+
+function startGame() {
+    const r = document.getElementById("roll").value, d = document.getElementById("dob").value, n = document.getElementById("name").value;
+    if(!r || !d || !n) return alert("ENTER ALL CREDENTIALS");
+
+    const dobYear = new Date(d).getFullYear();
+    if (dobYear < 2003 || dobYear > 2008) {
+        return alert("Access Denied: ENTER THE VALID DOB.");
+    }
+    
+    // Shuffle all questions, MUST ANSWER ALL
+    state.modes = shuffle([...state.modes]);
+    questionBank.ROAST = shuffle(questionBank.ROAST);
+    questionBank.COLOR_TRAP = shuffle(questionBank.COLOR_TRAP);
+    questionBank.RAPID_FIRE = shuffle(questionBank.RAPID_FIRE); 
+    state.name = n; document.getElementById("display-name").innerText = n;
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("header").classList.remove("hidden");
+    document.getElementById("wheelView").classList.remove("hidden");
+    drawWheel(); 
+}
+
+function drawWheel() {
+    const ctx = document.getElementById("wheel-canvas").getContext("2d");
+    ctx.clearRect(0,0,300,300);
+    const slice = (2*Math.PI)/state.modes.length;
+    state.modes.forEach((m,i) => {
+        ctx.beginPath(); ctx.fillStyle = ["#22d3ee", "#f43f5e", "#10b981", "#f59e0b"][i%4];
+        ctx.moveTo(150,150); ctx.arc(150,150,140, i*slice, (i+1)*slice); ctx.fill();
+        ctx.fillStyle = "black"; ctx.save(); ctx.translate(150,150); ctx.rotate(i*slice + slice/2);
+        
+        ctx.textAlign = "right";
+        ctx.font = "bold 20px monospace"; 
+        ctx.fillText(m.replace('_', ' '), 130, 6); 
+        ctx.restore();
+    });
+}
+
+function executeSpin() {
+    const btn = document.getElementById("spin-btn");
+    btn.style.display = "none"; 
+    state.isSpinning = true;
+    
+    let r = 0; 
+    state.spinInterval = setInterval(() => { 
+        r += 30; 
+        document.getElementById("wheel-canvas").style.transform = `rotate(${r}deg)`; 
+    }, 30);
+    
+    setTimeout(() => {
+        btn.style.display = "block";
+        btn.innerText = "STOP SPIN";
+        btn.onclick = stopSpin;
+    }, 2000);
+}
+
+function stopSpin() {
+    if(!state.isSpinning) return;
+    state.isSpinning = false; 
+    clearInterval(state.spinInterval);
+    
+    const rotation = parseInt(document.getElementById("wheel-canvas").style.transform.replace(/[^\d.]/g,'')) || 0;
+    const modeIdx = Math.floor(((360-(rotation%360))%360)/(360/state.modes.length));
+    state.currentMode = state.modes[modeIdx];
+    
+    const screen = document.getElementById("modeScreen");
+    const countdownEl = document.getElementById("modeCountdown");
+    document.getElementById("modeScreenText").innerText = state.currentMode.replace('_', ' ');
+    countdownEl.innerText = "3";
+    screen.classList.remove("hidden");
+    
+    let count = 3;
+    const countInt = setInterval(() => {
+        count--;
+        if(count > 0) { 
+            countdownEl.innerText = count; 
+        } else {
+            clearInterval(countInt);
+            screen.classList.add("hidden");
+            document.getElementById("wheelView").classList.add("hidden");
+            document.getElementById("quizView").classList.remove("hidden");
+            document.getElementById("modeTitle").innerText = state.currentMode.replace('_', ' ');
+            state.qIdx = 0; 
+            renderQuestion();
+        }
+    }, 1000);
+}
+
+function renderQuestion() {
+    clearInterval(state.qInterval);
+    let modeQs = questionBank[state.currentMode];
+    
+    if(state.qIdx >= modeQs.length) {
+        document.getElementById("display-score").innerText = state.score.toString().padStart(3,"0");
+        state.done[state.currentMode] = true;
+        state.modes = state.modes.filter(m => !state.done[m]);
+        
+        if(state.modes.length === 0) return showFeedback();
+        
+        document.getElementById("quizView").classList.add("hidden");
+        document.getElementById("wheelView").classList.remove("hidden");
+        
+        const btn = document.getElementById("spin-btn");
+        btn.style.display = "block";
+        btn.innerText = "Execute Spin";
+        btn.onclick = executeSpin;
+        
+        drawWheel(); return;
+    }
+
+    const qs = modeQs[state.qIdx];
+    
+    state.isAnswerLocked = false;
+    document.getElementById("roast-msg").classList.add("hidden");
+    
+    if(state.currentMode === "RAPID_FIRE") {
+        document.getElementById("qCounter").style.display = "none";
+        document.getElementById("progress-container").classList.add("hidden");
+    } else {
+        document.getElementById("qCounter").style.display = "block";
+        document.getElementById("progress-container").classList.remove("hidden");
+        document.getElementById("qCounter").innerText = `Q ${state.qIdx + 1} / ${modeQs.length}`;
+    }
+
+    document.getElementById("question").innerText = qs.q;
+    const optDiv = document.getElementById("options"); 
+    optDiv.innerHTML = "";
+    
+    state.qTime = 35; // Both Roast & Color Trap get 35s
+    
+    if(state.currentMode === "COLOR_TRAP") {
+        renderColorTrap(qs);
+    } else {
+        const shuffledOptions = shuffle([...qs.o]);
+        shuffledOptions.forEach((opt) => {
+            const btn = document.createElement("button");
+            btn.className = "w-full p-4 mb-3 border border-zinc-800 bg-black rounded text-left hover:bg-zinc-800 transition-colors";
+            btn.innerText = "> " + opt;
+            
+            btn.onclick = () => {
+                if(state.isAnswerLocked) return;
+                state.isAnswerLocked = true;
+                
+                btn.style.borderColor = "#22d3ee";
+                btn.style.backgroundColor = "#164e63";
+
+                if (state.currentMode === "RAPID_FIRE") {
+                    let timeTaken = state.rapidQuestionStartTime - state.rapidTimeRemaining;
+                    let pts = 0;
+                    if (opt === qs.a) {
+                        if (timeTaken <= 3) pts = 10;
+                        else if (timeTaken <= 6) pts = 8;
+                        else if (timeTaken <= 10) pts = 5;
+                        else pts = 2;
+                    }
+                    state.score += pts;
+                    state.modeScores.RAPID_FIRE += pts;
+                    state.qIdx++;
+                    renderQuestion(); // Move immediately
+                } else if(state.currentMode === "ROAST") {
+                    const msgDiv = document.getElementById("roast-msg");
+                    msgDiv.classList.remove("hidden");
+                    if (opt === qs.a) {
+                        state.score += 10;
+                        state.modeScores.ROAST += 10;
+                        msgDiv.innerText = goodRoasts[Math.floor(Math.random() * goodRoasts.length)];
+                        msgDiv.style.color = "#10b981"; 
+                    } else {
+                        msgDiv.innerText = badRoasts[Math.floor(Math.random() * badRoasts.length)];
+                        msgDiv.style.color = "#ef4444"; 
+                    }
+                    // Wait for timer or NEXT button to move on
+                }
+            };
+            optDiv.appendChild(btn);
+        });
+
+        // Add NEXT button for ROAST mode
+        if (state.currentMode === "ROAST") {
+            const nextBtn = document.createElement("button");
+            nextBtn.id = "skip-btn";
+            nextBtn.className = "w-full bg-zinc-700 text-white font-bold p-3 mt-4 rounded uppercase tracking-widest hidden transition-colors hover:bg-zinc-600";
+            nextBtn.innerText = "NEXT QUESTION >>";
+            nextBtn.onclick = () => {
+                state.isAnswerLocked = true; 
+                state.qIdx++;
+                renderQuestion();
+            };
+            optDiv.appendChild(nextBtn);
+        }
+    }
+    startQTimer();
+}
+
+function renderColorTrap(qs) {
+    const optDiv = document.getElementById("options");
+    const colors = ["#ef4444", "#3b82f6", "#10b981", "#eab308"];
+    const grid = document.createElement("div"); grid.className = "color-grid";
+    
+    let isAnswered = false;
+    const boxes = [];
+
+    for(let i = 0; i < 4; i++) {
+        const box = document.createElement("div");
+        box.className = "color-box shuffling";
+        
+        box.onclick = () => {
+            if(state.isAnswerLocked) return;
+            const isCorrect = box.dataset.isTarget === "true";
+            
+            if(isCorrect) {
+                state.isAnswerLocked = true; 
+                isAnswered = true; 
+                clearInterval(shuffleInt); 
+                box.classList.remove("shuffling"); box.classList.add("correct-box");
+                
+                state.score += 10;
+                state.modeScores.COLOR_TRAP += 10;
+                // Wait for timer or NEXT button to move on
+            } else {
+                box.classList.add("wrong-box");
+                setTimeout(() => box.classList.remove("wrong-box"), 300);
+            }
+        };
+        grid.appendChild(box); boxes.push(box);
+    }
+    optDiv.appendChild(grid);
+
+    // Dynamic Skip Button
+    const nextBtn = document.createElement("button");
+    nextBtn.id = "skip-btn";
+    nextBtn.className = "w-full bg-zinc-700 text-white font-bold p-3 mt-4 rounded uppercase tracking-widest hidden transition-colors hover:bg-zinc-600";
+    nextBtn.innerText = "NEXT QUESTION >>";
+    nextBtn.onclick = () => {
+        state.isAnswerLocked = true;
+        isAnswered = true;
+        clearInterval(shuffleInt);
+        state.qIdx++;
+        renderQuestion();
+    };
+    optDiv.appendChild(nextBtn);
+
+    const updateColors = () => {
+        if(isAnswered) return;
+        const shfC = shuffle([...colors]);
+        const shfN = shuffle([...qs.names]);
+        boxes.forEach((box, i) => {
+            box.style.backgroundColor = shfC[i];
+            box.innerHTML = `<span style="font-size: 14px; font-weight: 900; letter-spacing: 1px;">${shfN[i]}</span>`;
+            box.dataset.isTarget = (shfN[i] === qs.target);
+        });
+    };
+
+    updateColors(); 
+    const shuffleInt = setInterval(() => { 
+        if(!document.getElementById("quizView").classList.contains("hidden") && !isAnswered) updateColors(); 
+        else clearInterval(shuffleInt);
+    }, 1000);
+}
+
+function startQTimer() {
+    clearInterval(state.qInterval);
+    
+    if(state.currentMode === "RAPID_FIRE") {
+        state.rapidQuestionStartTime = state.rapidTimeRemaining; // Rapid fire uses global 150s logic
+    }
+
+    state.qInterval = setInterval(() => {
+        if (state.currentMode === "RAPID_FIRE") {
+            if (state.rapidTimeRemaining > 0) {
+                state.rapidTimeRemaining--;
+                document.getElementById("qTimer").innerText = state.rapidTimeRemaining + "s";
+            } else {
+                state.qIdx = 999; 
+                renderQuestion();
+            }
+        } else {
+            // ROAST and COLOR TRAP logic
+            if (state.qTime > 0) {
+                state.qTime--; 
+                let maxT = 35;
+                document.getElementById("qTimer").innerText = state.qTime + "s";
+                document.getElementById("qProgress").style.width = ((maxT-state.qTime)/maxT*100) + "%";
+
+                // Show NEXT button exactly after 15 seconds (when qTime hits 20s or below)
+                if (state.qTime <= 20) {
+                    const nextBtn = document.getElementById("skip-btn");
+                    if (nextBtn) nextBtn.classList.remove("hidden");
+                }
+            }
+            
+            if (state.qTime <= 0) {
+                // Auto-advance at 0s
+                state.qIdx++;
+                renderQuestion();
+            }
+        }
+    }, 1000);
+}
+
+function showFeedback() {
+    clearInterval(state.qInterval);
+    document.getElementById("quizView").classList.add("hidden");
+    document.getElementById("header").classList.add("hidden");
+    document.getElementById("feedbackView").classList.remove("hidden");
+}
+
+function submitFeedback() {
+    // ⚠️ PASTE YOUR GOOGLE APPS SCRIPT URL HERE ⚠️
+    const scriptURL = "https://script.google.com/macros/s/AKfycbzgX71vurxTWwd9LMR8DrYL8gGFVis0gdJMoSZc-zO6Yy9BgM2m9M7ip_jEFNBNToWp/exec";
+    const data = {
+        roll: document.getElementById("roll").value, name: state.name, dob: document.getElementById("dob").value,
+        puzzleScore: state.modeScores.PUZZLE, roastScore: state.modeScores.ROAST,
+        rapidScore: state.modeScores.RAPID_FIRE, colorScore: state.modeScores.COLOR_TRAP,
+        totalScore: state.score, feedback: document.getElementById("feedbackText").value
+    };
+    
+    document.getElementById("final-submit").innerText = "SYNCING...";
+    document.getElementById("final-submit").disabled = true;
+
+    fetch(scriptURL, { 
+        method: "POST", 
+        headers: { "Content-Type": "text/plain" }, // Standard text/plain avoids CORS preflight blocking in GAS
+        body: JSON.stringify(data) 
+    }).then(() => {
+        showResults();
+    }).catch(err => {
+        showResults(); // Advance to results even if visual fetch throws CORS error
+    });
+}
+
+function showResults() {
+    document.getElementById("feedbackView").classList.add("hidden");
+    const resView = document.getElementById("resultView");
+    resView.classList.remove("hidden");
+    document.getElementById("finalScore").innerText = state.score;
+    
+    let emoji = "🔥";
+    let msg = "EXCEPTIONAL WORK!";
+    
+    if(state.score < 100) { emoji = "💀"; msg = "BETTER LUCK NEXT TIME!"; } 
+    else if(state.score < 250) { emoji = "🚀"; msg = "GREAT JOB!"; }
+    
+    document.getElementById("resultMsg").innerText = msg;
+    
+    for(let i = 0; i < 15; i++) {
+        let el = document.createElement("div");
+        el.className = "emoji-float";
+        el.innerText = emoji;
+        el.style.left = Math.random() * 100 + "vw";
+        el.style.animationDelay = (Math.random() * 2) + "s";
+        el.style.animationDuration = (3 + Math.random() * 4) + "s";
+        resView.appendChild(el);
+    }
+}
+</script>
+</body>
+</html>
