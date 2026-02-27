@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DBMS QUIZ  / IT 2ND YR--CAHCET</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -13,7 +14,8 @@
         .home-btn:hover { background: #374151; border-color: #22d3ee; }
 
         /* Wheel */
-        #wheel-canvas { transition: transform 4s cubic-bezier(0.1, 0, 0, 1); filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.4)); }
+        #wheel-canvas { transition: transform 4s cubic-bezier(0.1, 0, 0, 1); filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.4));
+                       max-width: 100%; height: auto; }
         .wheel-pointer-top { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); z-index: 50; width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #22d3ee; }
 
         /* Color Trap */
@@ -28,6 +30,12 @@
 
         .progress-bar { transition: width 1s linear; height: 4px; background: #22d3ee; }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+        
+        /* responsive adjustments */
+        @media (max-width: 640px) {
+            .color-box { width: 120px; height: 100px; }
+            #wheel-canvas { max-width: 200px; max-height: 200px; }
+        }
 
         /* Emojis */
         @keyframes float-up { 0% { transform: translateY(100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; } }
