@@ -2,39 +2,106 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DBMS QUIZ  / IT 2ND YR--CAHCET</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-        body { background: #050505; color: #e0e0e0; font-family: 'JetBrains+Mono', monospace; overflow-x: hidden; }
         
+        /* 🌟 NEW: Animated Gradient Background 🌟 */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body { 
+            background: linear-gradient(-45deg, #050505, #16213e, #0f172a, #050505);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #e0e0e0; 
+            font-family: 'JetBrains+Mono', monospace; 
+            overflow-x: hidden; 
+        }
+
+        /* 🌟 NEW: Floating Box Animation 🌟 */
+        @keyframes float-container {
+            0%, 100% { transform: translateY(0px); box-shadow: 0 25px 50px -12px rgba(34, 211, 238, 0.15); }
+            50% { transform: translateY(-10px); box-shadow: 0 35px 60px -15px rgba(34, 211, 238, 0.3); }
+        }
+        .floating-box { animation: float-container 6s ease-in-out infinite; }
+
+        /* 🌟 NEW: Pop In Animation for Options 🌟 */
+        @keyframes popIn {
+            0% { transform: scale(0.8) translateY(10px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .animate-pop { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; }
+
+        /* 🌟 NEW: Danger Timer Pulse 🌟 */
+        @keyframes pulse-danger {
+            0%, 100% { color: #ef4444; transform: scale(1); }
+            50% { color: #f87171; transform: scale(1.3); text-shadow: 0 0 15px #ef4444; }
+        }
+        .timer-danger { animation: pulse-danger 0.8s infinite !important; }
+
+        /* 🌟 NEW: Striped Animated Progress Bar 🌟 */
+        .progress-bar { 
+            transition: width 1s linear; 
+            height: 6px; 
+            background-color: #22d3ee;
+            background-image: linear-gradient(45deg, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+            background-size: 1rem 1rem;
+            animation: progress-stripes 1s linear infinite;
+        }
+        @keyframes progress-stripes { from { background-position: 1rem 0; } to { background-position: 0 0; } }
+
         /* Home Button */
-        .home-btn { position: fixed; top: 15px; left: 15px; z-index: 100; background: #1f2937; color: white; padding: 8px 16px; border-radius: 6px; font-weight: bold; border: 1px solid #374151; cursor: pointer; transition: 0.2s; }
-        .home-btn:hover { background: #374151; border-color: #22d3ee; }
+        .home-btn { position: fixed; top: 15px; left: 15px; z-index: 100; background: #1f2937; color: white; padding: 8px 16px; border-radius: 6px; font-weight: bold; border: 1px solid #374151; cursor: pointer; transition: 0.3s; }
+        .home-btn:hover { background: #374151; border-color: #22d3ee; box-shadow: 0 0 15px rgba(34, 211, 238, 0.5); transform: scale(1.05); }
 
         /* Wheel */
-        #wheel-canvas { transition: transform 4s cubic-bezier(0.1, 0, 0, 1); filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.4));
+        #wheel-canvas { transition: transform 4s cubic-bezier(0.1, 0, 0, 1); filter: drop-shadow(0 0 25px rgba(34, 211, 238, 0.6));
                        max-width: 100%; height: auto; }
         .wheel-pointer-top { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); z-index: 50; width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #22d3ee; }
 
-        /* Color Trap */
-        .color-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin: 20px auto; max-width: 400px; }
-        .color-box { width: 150px; height: 120px; border-radius: 12px; border: 4px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 900; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); transition: background-color 0.2s ease, transform 0.1s ease; cursor: pointer; text-align: center; padding: 10px; }
-        .color-box:hover { transform: scale(1.05); border-color: #fff; }
-        @keyframes box-shuffle { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(3px, -3px); } 75% { transform: translate(-3px, 3px); } }
-        .shuffling { animation: box-shuffle 0.5s ease-in-out infinite; }
-        .correct-box { border-color: #10b981 !important; box-shadow: 0 0 20px #10b981; animation: none; transform: scale(1.1); }
-        @keyframes flash-red { 0%, 100% { border-color: #333; } 50% { border-color: #ef4444; } }
-        .wrong-box { animation: flash-red 0.3s ease-in-out; }
+        /* Stop Button Pulsing Animation */
+        @keyframes pulse-stop {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8); transform: scale(1); }
+            50% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); transform: scale(1.05); background-color: #ef4444; color: white; border-color: #ef4444; }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); transform: scale(1); }
+        }
+        .stop-pulse { animation: pulse-stop 1s infinite; background-color: #ef4444 !important; color: white !important; border-color: #ef4444 !important; }
 
-        .progress-bar { transition: width 1s linear; height: 4px; background: #22d3ee; }
+        /* Glowing Buttons on Hover */
+        button:not(.home-btn):not(#spin-btn):not(.color-box) { transition: all 0.2s ease-in-out; }
+        button:not(.home-btn):not(#spin-btn):not(.color-box):hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(34, 211, 238, 0.4); }
+
+        /* Color Trap Controls */
+        .trap-panel { background: rgba(0,0,0,0.6); border: 1px solid #333; padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center; backdrop-filter: blur(5px); }
+        .trap-select { width: 100%; background: #111; border: 2px solid #22d3ee; color: #fff; padding: 12px; border-radius: 8px; margin-bottom: 10px; outline: none; font-weight: bold; transition: 0.3s; }
+        .trap-select:focus { box-shadow: 0 0 15px rgba(34, 211, 238, 0.5); }
+        .trap-lock-btn { width: 100%; background: #f59e0b; color: #000; font-weight: 900; padding: 12px; border-radius: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .trap-lock-btn:disabled { background: #065f46; color: #fff; cursor: not-allowed; box-shadow: none !important; transform: none !important; }
+
+        /* Color Trap */
+        .color-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 20px auto; max-width: 450px; }
+        .color-box { width: 100%; min-height: 80px; border-radius: 12px; border: 4px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 900; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); transition: background-color 0.2s ease, transform 0.1s ease; cursor: pointer; text-align: center; padding: 10px; opacity: 0.2; pointer-events: none; }
+        .color-box.active { opacity: 1; pointer-events: auto; }
+        .color-box:hover { transform: scale(1.05); border-color: #fff; box-shadow: 0 0 15px rgba(255,255,255,0.5); }
+        
+        .color-box:active { transform: scale(0.85); border-color: #22d3ee; transition: transform 0.05s; }
+        
+        @keyframes box-shuffle { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(4px, -4px) rotate(1deg); } 75% { transform: translate(-4px, 4px) rotate(-1deg); } }
+        .shuffling { animation: box-shuffle 0.6s ease-in-out infinite; }
+        .correct-box { border-color: #10b981 !important; box-shadow: 0 0 30px #10b981 !important; animation: popIn 0.5s ease forwards !important; }
+        @keyframes flash-red { 0%, 100% { border-color: #333; transform: translateX(0); } 25% { border-color: #ef4444; transform: translateX(-10px); } 75% { border-color: #ef4444; transform: translateX(10px); } }
+        .wrong-box { animation: flash-red 0.4s ease-in-out; }
+
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
         
-        /* responsive adjustments */
         @media (max-width: 640px) {
-            .color-box { width: 40vw; height: 30vw; }
-            .color-grid { gap: 10px; max-width: 90vw; }
+            .color-box { min-height: 70px; }
+            .color-grid { gap: 10px; max-width: 95vw; }
             #wheel-canvas { max-width: 200px; max-height: 200px; }
             .home-btn { padding: 6px 12px; top: 10px; left: 10px; font-size: 14px; }
             h1.text-4xl { font-size: 1.75rem; }
@@ -44,7 +111,7 @@
         }
 
         /* Emojis */
-        @keyframes float-up { 0% { transform: translateY(100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; } }
+        @keyframes float-up { 0% { transform: translateY(100vh) rotate(0deg) scale(0.5); opacity: 1; } 100% { transform: translateY(-10vh) rotate(360deg) scale(1.5); opacity: 0; } }
         .emoji-float { position: fixed; font-size: 3rem; animation: float-up linear infinite; z-index: 10; pointer-events: none; }
     </style>
 </head>
@@ -52,89 +119,99 @@
 
 <button onclick="location.reload()" class="home-btn">🏠 HOME</button>
 
-<div class="w-full max-w-3xl bg-zinc-900 p-8 rounded-xl border border-zinc-800 shadow-2xl relative z-20">
+<div class="w-full max-w-3xl bg-zinc-900/90 backdrop-blur-md p-8 rounded-xl border border-zinc-700 shadow-2xl relative z-20 floating-box mx-auto">
     
     <div id="header" class="hidden flex justify-between items-center mb-6 border-b border-zinc-700 pb-3">
         <div><span class="text-[10px] text-zinc-500 uppercase">User</span><br><span id="display-name" class="text-cyan-400 font-bold"></span></div>
-        <div class="text-right"><span class="text-[10px] text-zinc-500 uppercase">Total Score</span><br><span id="display-score" class="text-yellow-500 font-bold">000</span></div>
+        <div class="text-right"><span class="text-[10px] text-zinc-500 uppercase">Total Score</span><br><span id="display-score" class="text-yellow-500 font-bold text-xl drop-shadow-[0_0_8px_rgba(234,179,8,0.8)]">000</span></div>
     </div>
 
-    <div id="welcomeView" class="text-center">
-        <h1 class="text-4xl mb-6 text-cyan-400 font-bold uppercase tracking-tight">DATA BASE MANAGEMENT SYSTEM</h1>
-        <p class="mb-8 text-zinc-400">Database Management Systems | Creative Quiz </p>
-        <button onclick="showLogin()" class="bg-cyan-600 hover:bg-cyan-500 text-black font-bold p-4 rounded uppercase tracking-widest w-full">Continue to Login -></button>
+    <div id="welcomeView" class="text-center animate-pop" style="animation-delay: 0s;">
+        <h1 class="text-4xl mb-6 text-cyan-400 font-bold uppercase tracking-tight drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">DATA BASE MANAGEMENT SYSTEM</h1>
+        <p class="mb-8 text-zinc-300">Database Management Systems | Creative Quiz </p>
+        <button onclick="showLogin()" class="bg-cyan-600 hover:bg-cyan-500 text-black font-bold p-4 rounded uppercase tracking-widest w-full shadow-lg shadow-cyan-600/30">Continue to Login -></button>
         <p class="text-[12px] text-zinc-500 mt-6 tracking-widest uppercase font-bold text-center">SITE PREPARED BY GOKS..</p>
     </div>
 
     <div id="login" class="hidden">
-        <h1 class="text-3xl mb-6 text-center text-cyan-400 font-bold uppercase">LOGIN</h1>
-        <div class="flex gap-4 mb-6">
-            <button onclick="switchLoginType('student')" id="btn-student" class="flex-1 bg-cyan-600 text-black font-bold p-3 rounded">Student</button>
+        <h1 class="text-3xl mb-6 text-center text-cyan-400 font-bold uppercase drop-shadow-[0_0_8px_rgba(34,211,238,0.5)] animate-pop">LOGIN</h1>
+        <div class="flex gap-4 mb-6 animate-pop" style="animation-delay: 0.1s;">
+            <button onclick="switchLoginType('student')" id="btn-student" class="flex-1 bg-cyan-600 text-black font-bold p-3 rounded shadow-md shadow-cyan-600/30">Student</button>
             <button onclick="switchLoginType('admin')" id="btn-admin" class="flex-1 bg-zinc-700 text-zinc-400 font-bold p-3 rounded">Admin</button>
         </div>
-        <div id="studentForm" class="space-y-4">
-            <input id="roll" placeholder="ROLL NUMBER" class="w-full p-3 bg-black border border-zinc-800 rounded outline-none" oninput="validateRoll()">
-            <input id="name" placeholder="FULL NAME" class="w-full p-3 bg-black border border-zinc-800 rounded outline-none" oninput="validateName()">
-            <input type="date" id="dob" class="w-full p-3 bg-black border border-zinc-800 rounded outline-none text-zinc-400">
-            <button onclick="startGame()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-black font-bold p-4 rounded uppercase">Initialize Session</button>
+        <div id="studentForm" class="space-y-4 animate-pop" style="animation-delay: 0.2s;">
+            <input id="roll" placeholder="ROLL NUMBER" class="w-full p-3 bg-black/50 border border-zinc-700 rounded outline-none focus:border-cyan-400 transition-colors" oninput="validateRoll()">
+            <input id="name" placeholder="FULL NAME" class="w-full p-3 bg-black/50 border border-zinc-700 rounded outline-none focus:border-cyan-400 transition-colors" oninput="validateName()">
+            <input type="date" id="dob" class="w-full p-3 bg-black/50 border border-zinc-700 rounded outline-none text-zinc-400 focus:border-cyan-400 transition-colors">
+            <button onclick="startGame()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-black font-bold p-4 rounded uppercase shadow-lg shadow-cyan-600/30 mt-4">Initialize Session</button>
         </div>
-        <div id="adminForm" class="space-y-4 hidden">
-            <input id="adminPassword" type="password" placeholder="ADMIN PASSWORD" class="w-full p-3 bg-black border border-zinc-800 rounded outline-none">
-            <button onclick="loginAdmin()" class="w-full bg-cyan-600 text-black font-bold p-4 rounded uppercase">Access Dashboard</button>
+        <div id="adminForm" class="space-y-4 hidden animate-pop" style="animation-delay: 0.2s;">
+            <input id="adminPassword" type="password" placeholder="ADMIN PASSWORD" class="w-full p-3 bg-black/50 border border-zinc-700 rounded outline-none focus:border-cyan-400 transition-colors">
+            <button onclick="loginAdmin()" class="w-full bg-cyan-600 text-black font-bold p-4 rounded uppercase shadow-lg shadow-cyan-600/30 mt-4">Access Dashboard</button>
         </div>
-        <p class="text-[12px] text-zinc-500 mt-6 text-center tracking-widest uppercase font-bold">SITE PREPARED BY GOKS..</p>
+        <p class="text-[12px] text-zinc-500 mt-6 text-center tracking-widest uppercase font-bold animate-pop" style="animation-delay: 0.3s;">SITE PREPARED BY GOKS..</p>
     </div>
 
-    <div id="wheelView" class="hidden text-center">
-        <div id="spinResult" class="text-cyan-400 font-bold mb-4 h-6"></div>
-        <div class="relative inline-block mb-10 mt-6">
+    <div id="wheelView" class="hidden text-center animate-pop">
+        <div id="spinResult" class="text-cyan-400 font-bold mb-4 h-6 text-xl tracking-widest drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]"></div>
+        <div class="relative inline-block mb-10 mt-6 drop-shadow-[0_0_20px_rgba(34,211,238,0.3)]">
             <div class="wheel-pointer-top"></div>
             <canvas id="wheel-canvas" width="300" height="300"></canvas>
         </div>
-        <button id="spin-btn" onclick="executeSpin()" class="bg-white text-black font-bold p-4 w-full rounded uppercase">Execute Spin</button>
+        <button id="spin-btn" onclick="executeSpin()" class="bg-white text-black font-bold p-4 w-full rounded uppercase transition-all duration-300 shadow-xl shadow-white/20">Execute Spin</button>
     </div>
 
-    <div id="modeScreen" class="hidden fixed inset-0 bg-black bg-opacity-95 flex flex-col items-center justify-center z-50">
-        <div id="modeScreenText" class="text-5xl text-cyan-400 font-bold uppercase tracking-tighter mb-6 text-center px-4"></div>
-        <div id="modeCountdown" class="text-7xl text-yellow-500 font-black">3</div>
+    <div id="modeScreen" class="hidden fixed inset-0 bg-black/95 backdrop-blur-sm flex flex-col items-center justify-center z-50">
+        <div id="modeScreenText" class="text-5xl text-cyan-400 font-bold uppercase tracking-tighter mb-6 text-center px-4 drop-shadow-[0_0_15px_rgba(34,211,238,0.8)] animate-pop"></div>
+        <div id="modeCountdown" class="text-7xl text-yellow-500 font-black drop-shadow-[0_0_20px_rgba(234,179,8,0.8)] animate-pop" style="animation-delay: 0.2s;">3</div>
+    </div>
+
+    <div id="rulesView" class="hidden text-center space-y-6 animate-pop">
+        <h1 id="rulesTitle" class="text-4xl text-cyan-400 font-bold uppercase tracking-tight drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]"></h1>
+        <div class="bg-black/60 p-8 rounded-xl border border-zinc-700 text-left mx-auto max-w-lg shadow-inner">
+            <p id="rulesContent" class="text-lg text-zinc-300 leading-relaxed space-y-2"></p>
+        </div>
+        <button onclick="startMode()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-black font-black p-4 rounded uppercase tracking-widest shadow-lg shadow-cyan-600/30">START PLAYING</button>
     </div>
 
     <div id="quizView" class="hidden">
-        <div class="flex justify-between items-center mb-2">
-            <h2 id="modeTitle" class="text-cyan-400 font-bold uppercase"></h2>
-            <span id="qTimer" class="text-yellow-500 font-bold text-xl"></span>
+        <div class="flex justify-between items-center mb-2 animate-pop">
+            <h2 id="modeTitle" class="text-cyan-400 font-bold uppercase tracking-wider drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]"></h2>
+            <span id="qTimer" class="text-yellow-500 font-black text-2xl drop-shadow-[0_0_8px_rgba(234,179,8,0.5)] transition-all duration-300"></span>
         </div>
-        <div id="progress-container" class="w-full bg-zinc-800 h-1 mb-6 rounded-full overflow-hidden"><div id="qProgress" class="progress-bar w-0"></div></div>
-        <p id="qCounter" class="text-[12px] text-zinc-500 mb-2 font-bold tracking-widest uppercase"></p>
-        <h3 id="question" class="text-xl font-bold mb-4 text-center min-h-[60px] flex items-center justify-center"></h3>
-        <div id="roast-msg" class="hidden text-center text-xl font-black mb-4 h-8 tracking-wide"></div>
-        <div id="options"></div>
+        <div id="progress-container" class="w-full bg-zinc-800 h-2 mb-6 rounded-full overflow-hidden shadow-inner animate-pop" style="animation-delay: 0.1s;"><div id="qProgress" class="progress-bar w-0"></div></div>
+        <p id="qCounter" class="text-[12px] text-zinc-400 mb-2 font-bold tracking-widest uppercase animate-pop" style="animation-delay: 0.1s;"></p>
+        <h3 id="question" class="text-xl font-bold mb-4 text-center min-h-[60px] flex items-center justify-center text-white drop-shadow-md animate-pop" style="animation-delay: 0.2s;"></h3>
+        <div id="roast-msg" class="hidden text-center text-xl font-black mb-4 min-h-[32px] tracking-wide"></div>
+        <div id="options" class="w-full"></div>
     </div>
 
-    <div id="feedbackView" class="hidden space-y-6 text-center">
-        <h2 class="text-cyan-400 text-2xl font-bold uppercase">Session Feedback</h2>
-        <textarea id="feedbackText" placeholder="Enter comments about the quiz..." class="w-full bg-black border border-zinc-800 p-3 rounded h-24 outline-none focus:border-cyan-500"></textarea>
-        <button id="final-submit" onclick="submitFeedback()" class="w-full bg-cyan-600 text-black font-bold p-4 rounded uppercase">Submit Data</button>
+    <div id="feedbackView" class="hidden space-y-6 text-center animate-pop">
+        <h2 class="text-cyan-400 text-3xl font-bold uppercase drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">Session Feedback</h2>
+        <textarea id="feedbackText" placeholder="Enter mandatory comments about the quiz..." class="w-full bg-black/60 border border-zinc-700 p-4 rounded-xl h-32 outline-none focus:border-cyan-400 transition-colors shadow-inner text-lg"></textarea>
+        <button id="final-submit" onclick="submitFeedback()" class="w-full bg-cyan-600 text-black font-black p-4 rounded uppercase shadow-lg shadow-cyan-600/40 text-lg hover:scale-105 transition-transform">Submit Data & See Marks</button>
         <p class="text-[12px] text-zinc-500 mt-6 text-center tracking-widest uppercase font-bold">SITE PREPARED BY GOKS...</p>
     </div>
 
-    <div id="resultView" class="hidden text-center space-y-6">
-        <h1 class="text-yellow-400 text-5xl font-black uppercase">Final Score</h1>
-        <h2 id="resultMsg" class="text-2xl text-cyan-400 font-bold mb-4"></h2>
-        <div class="bg-black p-10 rounded-xl border border-zinc-800"><p id="finalScore" class="text-7xl font-bold text-white"></p></div>
+    <div id="resultView" class="hidden text-center space-y-6 animate-pop">
+        <h1 class="text-yellow-400 text-5xl font-black uppercase drop-shadow-[0_0_15px_rgba(234,179,8,0.6)]">Final Score</h1>
+        <h2 id="resultMsg" class="text-2xl text-cyan-400 font-bold mb-4 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]"></h2>
+        <div class="bg-black/80 p-10 rounded-2xl border-2 border-zinc-700 shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:scale-105 transition-transform duration-500"><p id="finalScore" class="text-8xl font-black text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]"></p></div>
     </div>
 </div>
 
 <script>
-// Anti-Cheat System -> Moves to Feedback on 2nd violation
+// Anti-Cheat System -> Moves to Home Page on 2nd violation
 document.addEventListener("visibilitychange", () => {
     if (document.hidden && state.name !== "" && !document.getElementById("quizView").classList.contains("hidden")) {
         state.tabSwitches++;
         if (state.tabSwitches === 1) {
             alert("WARNING: Switching tabs is not allowed! Do it again and your test will end immediately.");
         } else if (state.tabSwitches >= 2) {
-            alert("DISQUALIFIED: You switched tabs multiple times. Moving to Feedback page.");
-            showFeedback();
+            alert("You are disqualified, so you are moved to the home page and fill the quiz again.");
+            state.qTime = 0;
+            clearInterval(state.qInterval);
+            location.reload(); 
         }
     }
 });
@@ -155,7 +232,7 @@ const users = {
     "24515":"DHARSHINI G", "24516":"DHILIP B", "24517":"DHILIP K", "24518":"DHIYABHARATHI V", "24519":"DINESH KARTHICK B", "24520":"GOKUL S",
      "24521":"GOPALA KRISHNAN S", "24522":"GOPIKA V", "24523":"HARINI R", "24524":"JAANEESHWARAN MURALI KRISHNAN", "24525":"JAISURYA D", "24526":"JAYAKABEELSH K", 
      "24527":"KABILAN V", "24528":"KARTHI A", "24529":"LATHIKA V", "24530":"LEENA S", "24531":"LIKITHA SOWJANYA B G", "24532":"LUBNAPARVEEN N", "24533":"MANJU R", 
-     "24534":"Munch seen ", "24535":"MOHAMED TUFAIL D", "24536":"MOHAMMAD SAALIM H", "24537":"MOHAMMED AFHAAN N", "24538":"MOHAMMED AYMAN A", "24539":"MOHAMMED IBRAHIM M",
+     "24534":"MANJUSREE G", "24535":"MOHAMED TUFAIL D", "24536":"MOHAMMAD SAALIM H", "24537":"MOHAMMED AFHAAN N", "24538":"MOHAMMED AYMAN A", "24539":"MOHAMMED IBRAHIM M",
       "24540":"MOHAMMED IBRAHIM M", "24541":"MOHAMMED KHUZAIMA T", "24542":"MOHAMMED MUBARAK M", "24543":"MOHAMMED MUSSAWIR T", "24544":"MOHAMMED SAQUE N", "24545":"MOHAMMED SHAFEE V",
        "24546":"MOHAMMED SHUJA M", "24547":"MOHAMMED UMAISE L", "24548":"MOHAMMED YAKOUB MUSAAB T M", "24549":"MONESH RAJ R", "24550":"MUKESH KANNAN V M", "24551":"NANDHINI P",
         "24552":"NARESH V", "24553":"NARESH KANNA K", "24554":"NAZIRA M", "24555":"NETHRA V", "24556":"PAVITHRA R", "24557":"POOVITHA P", "24558":"PREETHISH S", "24559":"RAKSHITHA S", 
@@ -165,22 +242,27 @@ const users = {
           "24586":"SUDHAKAR V.S", "24587":"SHARMILA", "24588":"KARTHIKEYAN"
 };
 
+// Fun English Interactive Roasts
 const goodRoasts = [
-    "Big brain energy!", "Not bad for a human.", "I'm mildly impressed.", "You actually read the syllabus!", 
-    "Wow, you might actually pass.", "Einstein is shaking in his grave.", "Did you Google that or are you just smart?", 
-    "A+ for effort, nerd.", "Okay, show-off!", "My circuits are pleased.", "Flawless victory.", 
-    "Is this ChatGPT answering?", "You must be the teacher's pet.", "Impressive... for a carbon-based lifeform.", 
-    "I bow to your database supremacy."
+    "Einstein is shaking in his grave! 🧠✨", 
+    "Flawless victory! Did you hack the matrix? 🏆", 
+    "Big brain energy activated! ⚡", 
+    "Okay show-off, we get it, you study! 🤓", 
+    "Teacher's pet detected! Excellent job! 🍎"
+];
+const badRoasts = [
+    "Brain.exe has stopped working... 🤖💤", 
+    "My grandma codes databases better than you! 👵💻", 
+    "Error 404: Logic not found. Try turning it off and on? 🔌", 
+    "NULL value detected in your head! 🪹", 
+    "Just drop out now, save the tuition fees! 💸😭"
 ];
 
-const badRoasts = [
-    "Did you even read the question?", "My grandma codes better than you.", "Error 404: Brain not found.", 
-    "Even a potato could guess that.", "Please tell me you misclicked.", "I weep for your GPA.", 
-    "Are you actively trying to fail?", "My RAM just short-circuited from that answer.", "That was physically painful to process.", 
-    "You're the reason we have warning labels.", "I've seen random number generators guess better.", 
-    "Did your cat walk on the keyboard?", "Just drop out now, save the instuition.", "Even a JOIN operation can't fix your logic.", 
-    "NULL value detected in your head."
-];
+const rules = {
+    ROAST: "🔥 <b>HOW TO PLAY:</b> Read the question and click the correct answer.<br>🔥 <b>REWARD:</b> +10 Points for correct.<br>🔥 <b>PUNISHMENT:</b> Get a hilarious roast for wrong answers!<br>⏱️ <b>TIME:</b> 60 Seconds per question. You MUST answer to proceed.",
+    COLOR_TRAP: "🎨 <b>HOW TO PLAY:</b><br>1. Choose your answer in the dropdown and click <b>LOCK ANSWER</b>.<br>2. 6 colored boxes will shuffle rapidly.<br>3. Click the box matching your locked answer!<br>⚠️ <b>WARNING:</b> You only have <b>5 CHANCES</b> to click the right box! Don't spam click!<br>⏱️ <b>TIME:</b> 40 Seconds per question.",
+    RAPID_FIRE: "⚡ <b>HOW TO PLAY:</b> 25 Questions back-to-back. Options are shuffled every time!<br>⚡ <b>SCORING:</b> Faster answer = Higher Score! (Up to 10pts per Q).<br>⏱️ <b>TIME:</b> 20 Seconds per question. You MUST wait out the timer even after clicking!"
+};
 
 let questionBank = {
     ROAST: [
@@ -197,24 +279,24 @@ let questionBank = {
         {q: "Which clause groups records into summary rows?", o:["GROUP BY", "ORDER BY", "HAVING"], a:"GROUP BY"},
         {q: "What does the ACID acronym stand for?", o:["Atomicity, Consistency, Isolation, Durability", "Accuracy, Control, Integration, Data", "Automated, Consistent, Indexed, Dynamic"], a:"Atomicity, Consistency, Isolation, Durability"}
     ],
+    // 6 Options total for all Color Trap questions
     COLOR_TRAP: [
-        {q: "What does DB stand for in DBMS?", target: "DATABASE", names: ["DATABASE", "DATABANK", "DATABYTE", "DATABLOCK"]},
-        {q: "Which key uniquely identifies a record?", target: "PRIMARY KEY", names: ["PRIMARY KEY", "FOREIGN KEY", "SUPER KEY", "CANDIDATE KEY"]},
-        {q: "What is 'data about data' called?", target: "METADATA", names: ["METADATA", "TABLE", "SCHEMA", "RECORD"]},
-        {q: "Which SQL command adds new data?", target: "INSERT", names: ["INSERT", "ADD", "UPDATE", "CREATE"]},
-        {q: "Which of these is a Database software?", target: "MYSQL", names: ["MYSQL", "PYTHON", "HTML", "MS WORD"]},
-        {q: "What does a row in a table represent?", target: "RECORD", names: ["RECORD", "FIELD", "ATTRIBUTE", "COLUMN"]},
-        {q: "Which command deletes a table completely?", target: "DROP", names: ["DROP", "DELETE", "REMOVE", "ERASE"]},
-        {q: "What does SQL stand for?", target: "STRUCTURED QUERY LANGUAGE", names: ["STRUCTURED QUERY LANGUAGE", "STANDARD QUERY LANGUAGE", "SIMPLE QUERY LANGUAGE", "SYSTEM QUERY LOGIC"]},
-        {q: "Which command modifies existing data?", target: "UPDATE", names: ["UPDATE", "ALTER", "CHANGE", "MODIFY"]},
-        {q: "Which command removes all rows but keeps structure?", target: "TRUNCATE", names: ["TRUNCATE", "DROP", "DELETE", "REMOVE"]},
-        {q: "What establishes a link between two tables?", target: "FOREIGN KEY", names: ["FOREIGN KEY", "PRIMARY KEY", "UNIQUE KEY", "LINK KEY"]},
-        {q: "Which operation selects specific rows?", target: "SELECT", names: ["SELECT", "PROJECT", "JOIN", "INTERSECT"]},
-        {q: "What represents an entity in an ER Diagram?", target: "RECTANGLE", names: ["RECTANGLE", "OVAL", "DIAMOND", "LINE"]},
-        {q: "What represents an attribute in an ER Diagram?", target: "OVAL", names: ["OVAL", "RECTANGLE", "DIAMOND", "SQUARE"]},
-        {q: "What represents a relationship in an ER Diagram?", target: "DIAMOND", names: ["DIAMOND", "RECTANGLE", "OVAL", "CIRCLE"]},
-        {q: "Which NF eliminates partial dependency?", target: "2NF", names: ["2NF", "1NF", "3NF", "BCNF"]},
-   
+        {q: "What does DB stand for in DBMS?", target: "DATABASE", names: ["DATABASE", "DATABANK", "DATABYTE", "DATABLOCK", "DATAGRID", "DATASTORE"]},
+        {q: "Which key uniquely identifies a record?", target: "PRIMARY KEY", names: ["PRIMARY KEY", "FOREIGN KEY", "SUPER KEY", "CANDIDATE KEY", "ALTERNATE KEY", "UNIQUE ID"]},
+        {q: "What is 'data about data' called?", target: "METADATA", names: ["METADATA", "TABLE", "SCHEMA", "RECORD", "LOG FILE", "DATABLOCK"]},
+        {q: "Which SQL command adds new data?", target: "INSERT", names: ["INSERT", "ADD", "UPDATE", "CREATE", "APPEND", "STORE"]},
+        {q: "Which of these is a Database software?", target: "MYSQL", names: ["MYSQL", "PYTHON", "HTML", "MS WORD", "EXCEL", "JAVA"]},
+        {q: "What does a row in a table represent?", target: "RECORD", names: ["RECORD", "FIELD", "ATTRIBUTE", "COLUMN", "CELL", "KEY"]},
+        {q: "Which command deletes a table completely?", target: "DROP", names: ["DROP", "DELETE", "REMOVE", "ERASE", "TRUNCATE", "CLEAR"]},
+        {q: "What does SQL stand for?", target: "STRUCTURED QUERY LANGUAGE", names: ["STRUCTURED QUERY LANGUAGE", "STANDARD QUERY LANGUAGE", "SIMPLE QUERY LANGUAGE", "SYSTEM QUERY LOGIC", "SEQUENTIAL QUERY LOGIC", "SYNTAX QUERY LOGIC"]},
+        {q: "Which command modifies existing data?", target: "UPDATE", names: ["UPDATE", "ALTER", "CHANGE", "MODIFY", "REVISE", "EDIT"]},
+        {q: "Which command removes all rows but keeps structure?", target: "TRUNCATE", names: ["TRUNCATE", "DROP", "DELETE", "REMOVE", "ERASE", "CLEAR"]},
+        {q: "What establishes a link between two tables?", target: "FOREIGN KEY", names: ["FOREIGN KEY", "PRIMARY KEY", "UNIQUE KEY", "LINK KEY", "SECONDARY KEY", "RELATIONAL KEY"]},
+        {q: "Which operation selects specific rows?", target: "SELECT", names: ["SELECT", "PROJECT", "JOIN", "INTERSECT", "UNION", "FILTER"]},
+        {q: "What represents an entity in an ER Diagram?", target: "RECTANGLE", names: ["RECTANGLE", "OVAL", "DIAMOND", "LINE", "TRIANGLE", "CYLINDER"]},
+        {q: "What represents an attribute in an ER Diagram?", target: "OVAL", names: ["OVAL", "RECTANGLE", "DIAMOND", "SQUARE", "LINE", "CIRCLE"]},
+        {q: "What represents a relationship in an ER Diagram?", target: "DIAMOND", names: ["DIAMOND", "RECTANGLE", "OVAL", "CIRCLE", "SQUARE", "LINE"]},
+        {q: "Which NF eliminates partial dependency?", target: "2NF", names: ["2NF", "1NF", "3NF", "BCNF", "4NF", "5NF"]}
     ],
     RAPID_FIRE: [
         {q: "What defines the structure of a database?", o:["Schema", "Instance", "View"], a:"Schema"},
@@ -244,7 +326,6 @@ let questionBank = {
         {q: "A foreign key references a?", o:["Primary Key", "Candidate Key", "Super Key"], a:"Primary Key"},
         {q: "What does DML stand for?", o:["Data Manipulation Language", "Data Model Logic", "Database Mapping Link"], a:"Data Manipulation Language"},
         {q: "What is the Cartesian Product symbol?", o:["X", "π", "σ"], a:"X"},
-        // 20 Additional DBMS Rapid Fire Questions
         {q: "Which of the following is a DCL command?", o:["GRANT", "INSERT", "DROP"], a:"GRANT"},
         {q: "What does TCL stand for?", o:["Transaction Control Language", "Table Control Logic", "Transmission Command Link"], a:"Transaction Control Language"},
         {q: "Which command is used to remove a view?", o:["DROP VIEW", "DELETE VIEW", "REMOVE VIEW"], a:"DROP VIEW"},
@@ -270,13 +351,21 @@ let questionBank = {
 
 let state = { 
     name: "", score: 0, modeScores: { PUZZLE: 0, ROAST: 0, RAPID_FIRE: 0, COLOR_TRAP: 0 }, 
-    modes: ["ROAST", "RAPID_FIRE", "COLOR_TRAP"], done: {}, qIdx: 0, qTime: 35, 
-    rapidTimeRemaining: 150, rapidQuestionStartTime: 150, tabSwitches: 0,
-    isAnswerLocked: false
+    modes: ["ROAST", "RAPID_FIRE", "COLOR_TRAP"], done: {}, qIdx: 0, qTime: 40, 
+    tabSwitches: 0, isAnswerLocked: false, isAdmin: false
 };
 
-function validateRoll() { let r = document.getElementById("roll").value; document.getElementById("name").value = users[r] || ""; }
-function validateName() { let n = document.getElementById("name").value.toUpperCase(); let rId = Object.keys(users).find(k => users[k] === n); if(rId) document.getElementById("roll").value = rId; }
+// 🌟 NEW: Dynamic Roll/Name Auto-fill Logic 🌟
+function validateRoll() { 
+    let r = document.getElementById("roll").value.trim(); 
+    document.getElementById("name").value = users[r] || ""; 
+}
+function validateName() { 
+    let n = document.getElementById("name").value.trim().toUpperCase(); 
+    let rId = Object.keys(users).find(k => users[k].toUpperCase() === n); 
+    document.getElementById("roll").value = rId || ""; 
+}
+
 function switchLoginType(t) { document.getElementById("studentForm").classList.toggle("hidden", t==='admin'); document.getElementById("adminForm").classList.toggle("hidden", t==='student'); }
 function showLogin() { document.getElementById("welcomeView").classList.add("hidden"); document.getElementById("login").classList.remove("hidden"); }
 
@@ -290,16 +379,23 @@ function startGame() {
     const r = document.getElementById("roll").value, d = document.getElementById("dob").value, n = document.getElementById("name").value;
     if(!r || !d || !n) return alert("ENTER ALL CREDENTIALS");
 
-    const dobYear = new Date(d).getFullYear();
-    if (dobYear < 2003 || dobYear > 2008) {
-        return alert("Access Denied: ENTER THE VALID DOB.");
+    // Admin Access Bypass Check
+    if (r === "24520") {
+        state.isAdmin = true;
+    } else {
+        const dobYear = new Date(d).getFullYear();
+        if (dobYear < 2003 || dobYear > 2008) {
+            return alert("Access Denied: ENTER THE VALID DOB.");
+        }
     }
     
-    // Shuffle all questions, MUST ANSWER ALL
+    // Shuffle all modes, MUST ANSWER ALL
     state.modes = shuffle([...state.modes]);
     questionBank.ROAST = shuffle(questionBank.ROAST);
     questionBank.COLOR_TRAP = shuffle(questionBank.COLOR_TRAP);
-    questionBank.RAPID_FIRE = shuffle(questionBank.RAPID_FIRE); 
+    // Rapid fire: Exactly 25 random questions per user
+    questionBank.RAPID_FIRE = shuffle(questionBank.RAPID_FIRE).slice(0, 25); 
+
     state.name = n; document.getElementById("display-name").innerText = n;
     document.getElementById("login").classList.add("hidden");
     document.getElementById("header").classList.remove("hidden");
@@ -334,17 +430,28 @@ function executeSpin() {
         document.getElementById("wheel-canvas").style.transform = `rotate(${r}deg)`; 
     }, 30);
     
-    setTimeout(() => {
-        btn.style.display = "block";
-        btn.innerText = "STOP SPIN";
-        btn.onclick = stopSpin;
-    }, 2000);
+    if (state.modes.length === 1) {
+        // Auto stop if only 1 mode left
+        setTimeout(() => {
+            stopSpin();
+        }, 2000);
+    } else {
+        setTimeout(() => {
+            btn.style.display = "block";
+            btn.innerText = "STOP SPIN";
+            btn.classList.add("stop-pulse"); // Add animation class
+            btn.onclick = stopSpin;
+        }, 2000);
+    }
 }
 
 function stopSpin() {
     if(!state.isSpinning) return;
     state.isSpinning = false; 
     clearInterval(state.spinInterval);
+    
+    const btn = document.getElementById("spin-btn");
+    btn.classList.remove("stop-pulse"); 
     
     const rotation = parseInt(document.getElementById("wheel-canvas").style.transform.replace(/[^\d.]/g,'')) || 0;
     const modeIdx = Math.floor(((360-(rotation%360))%360)/(360/state.modes.length));
@@ -365,12 +472,21 @@ function stopSpin() {
             clearInterval(countInt);
             screen.classList.add("hidden");
             document.getElementById("wheelView").classList.add("hidden");
-            document.getElementById("quizView").classList.remove("hidden");
-            document.getElementById("modeTitle").innerText = state.currentMode.replace('_', ' ');
-            state.qIdx = 0; 
-            renderQuestion();
+            
+            const rulesView = document.getElementById("rulesView");
+            rulesView.classList.remove("hidden");
+            document.getElementById("rulesTitle").innerText = state.currentMode.replace('_', ' ') + " RULES";
+            document.getElementById("rulesContent").innerHTML = rules[state.currentMode];
         }
     }, 1000);
+}
+
+function startMode() {
+    document.getElementById("rulesView").classList.add("hidden");
+    document.getElementById("quizView").classList.remove("hidden");
+    document.getElementById("modeTitle").innerText = state.currentMode.replace('_', ' ');
+    state.qIdx = 0; 
+    renderQuestion();
 }
 
 function renderQuestion() {
@@ -400,28 +516,35 @@ function renderQuestion() {
     state.isAnswerLocked = false;
     document.getElementById("roast-msg").classList.add("hidden");
     
-    if(state.currentMode === "RAPID_FIRE") {
-        document.getElementById("qCounter").style.display = "none";
-        document.getElementById("progress-container").classList.add("hidden");
-    } else {
-        document.getElementById("qCounter").style.display = "block";
-        document.getElementById("progress-container").classList.remove("hidden");
-        document.getElementById("qCounter").innerText = `Q ${state.qIdx + 1} / ${modeQs.length}`;
-    }
+    document.getElementById("qCounter").style.display = "block";
+    document.getElementById("progress-container").classList.remove("hidden");
+    document.getElementById("qCounter").innerText = `Q ${state.qIdx + 1} / ${modeQs.length}`;
 
-    document.getElementById("question").innerText = qs.q;
+    // Remove animation class, then add it back to trigger reflow and animation
+    const qEl = document.getElementById("question");
+    qEl.classList.remove("animate-pop");
+    void qEl.offsetWidth; 
+    qEl.classList.add("animate-pop");
+    qEl.innerText = qs.q;
+    
     const optDiv = document.getElementById("options"); 
     optDiv.innerHTML = "";
     
-    state.qTime = 35; // Both Roast & Color Trap get 35s
+    if (state.currentMode === "ROAST") state.qTime = 60;
+    else if (state.currentMode === "RAPID_FIRE") state.qTime = 20; 
+    else state.qTime = 40; 
+    
+    // Reset timer styling
+    document.getElementById("qTimer").classList.remove("timer-danger");
     
     if(state.currentMode === "COLOR_TRAP") {
         renderColorTrap(qs);
     } else {
         const shuffledOptions = shuffle([...qs.o]);
-        shuffledOptions.forEach((opt) => {
+        shuffledOptions.forEach((opt, index) => {
             const btn = document.createElement("button");
-            btn.className = "w-full p-4 mb-3 border border-zinc-800 bg-black rounded text-left hover:bg-zinc-800 transition-colors";
+            btn.className = "w-full p-4 mb-3 border border-zinc-800 bg-black rounded text-left hover:bg-zinc-800 transition-all animate-pop";
+            btn.style.animationDelay = (index * 0.1) + "s";
             btn.innerText = "> " + opt;
             
             btn.onclick = () => {
@@ -430,9 +553,10 @@ function renderQuestion() {
                 
                 btn.style.borderColor = "#22d3ee";
                 btn.style.backgroundColor = "#164e63";
+                btn.style.boxShadow = "0 0 15px rgba(34, 211, 238, 0.4)";
 
                 if (state.currentMode === "RAPID_FIRE") {
-                    let timeTaken = state.rapidQuestionStartTime - state.rapidTimeRemaining;
+                    let timeTaken = 20 - state.qTime;
                     let pts = 0;
                     if (opt === qs.a) {
                         if (timeTaken <= 3) pts = 10;
@@ -442,21 +566,35 @@ function renderQuestion() {
                     }
                     state.score += pts;
                     state.modeScores.RAPID_FIRE += pts;
-                    state.qIdx++;
-                    renderQuestion(); // Move immediately
+                    
+                    const msgDiv = document.getElementById("roast-msg");
+                    msgDiv.classList.remove("hidden");
+                    msgDiv.innerHTML = `<span style="color:#22d3ee; display:inline-block; animation: popIn 0.4s ease forwards;">Answer Locked! Waiting for timer to move to next question...</span>`;
+                    
+                    // Admin bypass shows skip button, normal users wait for 20s timer to run out
+                    if(state.isAdmin) {
+                        const nextBtn = document.getElementById("skip-btn");
+                        if (nextBtn) nextBtn.classList.remove("hidden");
+                    }
+
                 } else if(state.currentMode === "ROAST") {
                     const msgDiv = document.getElementById("roast-msg");
                     msgDiv.classList.remove("hidden");
+                    
+                    let roastText = (opt === qs.a) ? goodRoasts[Math.floor(Math.random() * goodRoasts.length)] : badRoasts[Math.floor(Math.random() * badRoasts.length)];
+                    let color = (opt === qs.a) ? "#10b981" : "#ef4444";
+                    
                     if (opt === qs.a) {
                         state.score += 10;
                         state.modeScores.ROAST += 10;
-                        msgDiv.innerText = goodRoasts[Math.floor(Math.random() * goodRoasts.length)];
-                        msgDiv.style.color = "#10b981"; 
-                    } else {
-                        msgDiv.innerText = badRoasts[Math.floor(Math.random() * badRoasts.length)];
-                        msgDiv.style.color = "#ef4444"; 
                     }
-                    // Wait for timer or NEXT button to move on
+                    
+                    msgDiv.innerHTML = `<span style="color:${color}; display:inline-block; animation: popIn 0.5s ease forwards;">${roastText}</span><br><span style="font-size:14px; color:#f59e0b;">Answer locked! Wait for the NEXT button to open.</span>`;
+                    
+                    if(state.isAdmin) {
+                        const nextBtn = document.getElementById("skip-btn");
+                        if (nextBtn) nextBtn.classList.remove("hidden");
+                    }
                 }
             };
             optDiv.appendChild(btn);
@@ -466,10 +604,23 @@ function renderQuestion() {
         if (state.currentMode === "ROAST") {
             const nextBtn = document.createElement("button");
             nextBtn.id = "skip-btn";
-            nextBtn.className = "w-full bg-zinc-700 text-white font-bold p-3 mt-4 rounded uppercase tracking-widest hidden transition-colors hover:bg-zinc-600";
+            nextBtn.className = "w-full bg-zinc-700 text-white font-bold p-3 mt-4 rounded uppercase tracking-widest hidden transition-all hover:bg-zinc-600 hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]";
             nextBtn.innerText = "NEXT QUESTION >>";
             nextBtn.onclick = () => {
-                state.isAnswerLocked = true; 
+                if(!state.isAnswerLocked && !state.isAdmin) return;
+                state.qIdx++;
+                renderQuestion();
+            };
+            optDiv.appendChild(nextBtn);
+        }
+        
+        // Add NEXT button for RAPID FIRE (ONLY visible for Admin)
+        if (state.currentMode === "RAPID_FIRE" && state.isAdmin) {
+            const nextBtn = document.createElement("button");
+            nextBtn.id = "skip-btn";
+            nextBtn.className = "w-full bg-zinc-700 text-white font-bold p-3 mt-4 rounded uppercase tracking-widest transition-colors hover:bg-zinc-600";
+            nextBtn.innerText = "ADMIN SKIP >>";
+            nextBtn.onclick = () => {
                 state.qIdx++;
                 renderQuestion();
             };
@@ -481,45 +632,121 @@ function renderQuestion() {
 
 function renderColorTrap(qs) {
     const optDiv = document.getElementById("options");
-    const colors = ["#ef4444", "#3b82f6", "#10b981", "#eab308"];
-    const grid = document.createElement("div"); grid.className = "color-grid";
+    
+    // 1. Dropdown Selection Panel
+    const controlPanel = document.createElement("div");
+    controlPanel.className = "mb-6 p-4 bg-zinc-900 border border-zinc-700 rounded-xl animate-pop";
+    
+    const select = document.createElement("select");
+    select.className = "w-full bg-black border-2 border-cyan-700 text-white p-3 rounded mb-4 font-bold outline-none cursor-pointer focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.3)] transition-all";
+    
+    const defOpt = document.createElement("option");
+    defOpt.text = "-- SELECT YOUR ANSWER --";
+    defOpt.value = "";
+    select.appendChild(defOpt);
+
+    let shuffledNames = shuffle([...qs.names]);
+    shuffledNames.forEach(name => {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.text = name;
+        select.appendChild(opt);
+    });
+
+    const lockBtn = document.createElement("button");
+    lockBtn.innerText = "🔒 LOCK ANSWER";
+    lockBtn.className = "w-full bg-green-800 text-white font-black p-3 rounded uppercase tracking-widest transition-all hover:bg-green-700 hover:shadow-[0_0_15px_rgba(16,185,129,0.4)]";
+
+    controlPanel.appendChild(select);
+    controlPanel.appendChild(lockBtn);
+    optDiv.appendChild(controlPanel);
+
+    // 2. Color Grid (Now 6 boxes using all 6 names)
+    const colors = ["#10b981", "#eab308", "#ef4444", "#3b82f6", "#a855f7", "#ec4899"];
+    const grid = document.createElement("div"); 
+    grid.className = "color-grid animate-pop";
+    grid.style.animationDelay = "0.2s";
     
     let isAnswered = false;
     const boxes = [];
+    let chances = 5; // Updated to 5 chances
+    let clickCooldown = false;
+    let gridNames = shuffle([...qs.names]); // all 6 options
 
-    for(let i = 0; i < 4; i++) {
+    for(let i = 0; i < 6; i++) {
         const box = document.createElement("div");
         box.className = "color-box shuffling";
+        box.style.opacity = "0.3"; 
+        box.style.pointerEvents = "none"; 
         
         box.onclick = () => {
-            if(state.isAnswerLocked) return;
-            const isCorrect = box.dataset.isTarget === "true";
+            if(state.isAnswerLocked || clickCooldown) return;
             
-            if(isCorrect) {
-                state.isAnswerLocked = true; 
-                isAnswered = true; 
-                clearInterval(shuffleInt); 
-                box.classList.remove("shuffling"); box.classList.add("correct-box");
+            // Allow clicking only if they locked the dropdown
+            if(!select.disabled) {
+                alert("Lock your answer from the dropdown first!");
+                return;
+            }
+
+            clickCooldown = true;
+            setTimeout(() => clickCooldown = false, 600); // Prevent spam clicking the box
+            
+            // Wrong Box selected based on what they locked
+            if(box.dataset.val !== select.value) {
+                chances--;
+                box.classList.add("wrong-box");
+                setTimeout(() => box.classList.remove("wrong-box"), 400);
                 
+                const msgDiv = document.getElementById("roast-msg");
+                msgDiv.classList.remove("hidden");
+                
+                if(chances <= 0) {
+                    msgDiv.innerHTML = `<span style="color:#ef4444; font-size:14px; display:inline-block; animation: popIn 0.3s ease forwards;">Out of chances! Moving to next...</span>`;
+                    state.isAnswerLocked = true;
+                    isAnswered = true;
+                    clearInterval(shuffleInt);
+                    setTimeout(() => { state.qIdx++; renderQuestion(); }, 1500);
+                } else {
+                    msgDiv.innerHTML = `<span style="color:#ef4444; font-size:14px; display:inline-block; animation: popIn 0.2s ease forwards;">Wrong box! ${chances} chances left.</span>`;
+                }
+                return;
+            }
+
+            // Correct Box Selected
+            state.isAnswerLocked = true; 
+            isAnswered = true; 
+            clearInterval(shuffleInt); 
+            
+            const msgDiv = document.getElementById("roast-msg");
+            msgDiv.classList.remove("hidden");
+            msgDiv.innerHTML = `<span style="font-size:14px; color:#10b981; display:inline-block; animation: popIn 0.5s ease forwards;">Correct Box locked! Wait for the NEXT button to appear.</span>`;
+            
+            if(select.value === qs.target) {
+                box.classList.remove("shuffling"); 
+                box.classList.add("correct-box");
                 state.score += 10;
                 state.modeScores.COLOR_TRAP += 10;
-                // Wait for timer or NEXT button to move on
             } else {
                 box.classList.add("wrong-box");
-                setTimeout(() => box.classList.remove("wrong-box"), 300);
+                box.style.opacity = "0.5";
+            }
+            
+            if(state.isAdmin) {
+                const nextBtn = document.getElementById("skip-btn");
+                if (nextBtn) nextBtn.classList.remove("hidden");
             }
         };
-        grid.appendChild(box); boxes.push(box);
+        grid.appendChild(box); 
+        boxes.push(box);
     }
     optDiv.appendChild(grid);
 
-    // Dynamic Skip Button
     const nextBtn = document.createElement("button");
     nextBtn.id = "skip-btn";
-    nextBtn.className = "w-full bg-zinc-700 text-white font-bold p-3 mt-4 rounded uppercase tracking-widest hidden transition-colors hover:bg-zinc-600";
+    nextBtn.className = "w-full bg-zinc-700 text-white font-bold p-3 mt-4 rounded uppercase tracking-widest hidden transition-all hover:bg-zinc-600 hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]";
     nextBtn.innerText = "NEXT QUESTION >>";
     nextBtn.onclick = () => {
-        state.isAnswerLocked = true;
+        if(!state.isAnswerLocked && !state.isAdmin) return;
         isAnswered = true;
         clearInterval(shuffleInt);
         state.qIdx++;
@@ -527,59 +754,93 @@ function renderColorTrap(qs) {
     };
     optDiv.appendChild(nextBtn);
 
+    lockBtn.onclick = () => {
+        if(select.value === "") return alert("Please select an answer from the dropdown first!");
+        
+        select.disabled = true;
+        lockBtn.disabled = true;
+        lockBtn.innerText = "✅ ANSWER LOCKED";
+        lockBtn.className = "w-full bg-green-700 text-white font-black p-3 rounded uppercase tracking-widest cursor-not-allowed shadow-[0_0_15px_rgba(16,185,129,0.3)]";
+        
+        const msgDiv = document.getElementById("roast-msg");
+        msgDiv.classList.remove("hidden");
+        msgDiv.innerHTML = `<span style="color:#22d3ee; font-size:14px; display:inline-block; animation: popIn 0.4s ease forwards;">Option locked! You have 5 chances to click the matching box below!</span>`;
+        
+        boxes.forEach(b => {
+            b.style.opacity = "1";
+            b.style.pointerEvents = "auto";
+        });
+    };
+
     const updateColors = () => {
         if(isAnswered) return;
         const shfC = shuffle([...colors]);
-        const shfN = shuffle([...qs.names]);
+        const shfN = shuffle([...gridNames]);
         boxes.forEach((box, i) => {
             box.style.backgroundColor = shfC[i];
             box.innerHTML = `<span style="font-size: 14px; font-weight: 900; letter-spacing: 1px;">${shfN[i]}</span>`;
-            box.dataset.isTarget = (shfN[i] === qs.target);
+            box.dataset.val = shfN[i];
         });
     };
 
     updateColors(); 
+    // Slowed down shuffle slightly as requested to 850ms
     const shuffleInt = setInterval(() => { 
         if(!document.getElementById("quizView").classList.contains("hidden") && !isAnswered) updateColors(); 
         else clearInterval(shuffleInt);
-    }, 1000);
+    }, 850);
 }
 
 function startQTimer() {
     clearInterval(state.qInterval);
     
-    if(state.currentMode === "RAPID_FIRE") {
-        state.rapidQuestionStartTime = state.rapidTimeRemaining; // Rapid fire uses global 150s logic
-    }
-
     state.qInterval = setInterval(() => {
-        if (state.currentMode === "RAPID_FIRE") {
-            if (state.rapidTimeRemaining > 0) {
-                state.rapidTimeRemaining--;
-                document.getElementById("qTimer").innerText = state.rapidTimeRemaining + "s";
-            } else {
-                state.qIdx = 999; 
-                renderQuestion();
-            }
-        } else {
-            // ROAST and COLOR TRAP logic
-            if (state.qTime > 0) {
-                state.qTime--; 
-                let maxT = 35;
-                document.getElementById("qTimer").innerText = state.qTime + "s";
-                document.getElementById("qProgress").style.width = ((maxT-state.qTime)/maxT*100) + "%";
+        if (state.isAdmin) {
+            document.getElementById("qTimer").innerText = "ADMIN";
+            document.getElementById("qProgress").style.width = "100%";
+            const nextBtn = document.getElementById("skip-btn");
+            if (nextBtn) nextBtn.classList.remove("hidden");
+            return;
+        }
 
-                // Show NEXT button exactly after 15 seconds (when qTime hits 20s or below)
-                if (state.qTime <= 20) {
-                    const nextBtn = document.getElementById("skip-btn");
-                    if (nextBtn) nextBtn.classList.remove("hidden");
-                }
-            }
+        if (state.qTime > 0) {
+            state.qTime--; 
+            let maxT = (state.currentMode === "ROAST") ? 60 : (state.currentMode === "RAPID_FIRE" ? 20 : 40);
             
-            if (state.qTime <= 0) {
-                // Auto-advance at 0s
+            const qTimerEl = document.getElementById("qTimer");
+            qTimerEl.innerText = state.qTime + "s";
+            
+            // Danger animation when time is low
+            if (state.qTime <= 5 && !state.isAnswerLocked) {
+                qTimerEl.classList.add("timer-danger");
+            } else {
+                qTimerEl.classList.remove("timer-danger");
+            }
+
+            document.getElementById("qProgress").style.width = ((maxT-state.qTime)/maxT*100) + "%";
+
+            // Show NEXT button after exact times (Roast = 30s)
+            let timeThreshold = (state.currentMode === "ROAST") ? 30 : 25; 
+            if (state.currentMode !== "RAPID_FIRE" && state.qTime <= timeThreshold) {
+                const nextBtn = document.getElementById("skip-btn");
+                if (nextBtn && state.isAnswerLocked) nextBtn.classList.remove("hidden");
+            }
+        }
+        
+        if (state.qTime <= 0) {
+            // RAPID FIRE automatically moves to next question when timer runs out, whether locked or not.
+            if (state.currentMode === "RAPID_FIRE") {
                 state.qIdx++;
                 renderQuestion();
+            } 
+            // Other modes: Force them to click an answer before proceeding
+            else if (state.isAnswerLocked) {
+                state.qIdx++;
+                renderQuestion();
+            } else {
+                const msgDiv = document.getElementById("roast-msg");
+                msgDiv.classList.remove("hidden");
+                msgDiv.innerHTML = `<span style="color:#ef4444; font-size:16px; display:inline-block; animation: flash-red 0.5s ease-in-out infinite;">Time's up! You MUST select an answer to proceed!</span>`;
             }
         }
     }, 1000);
@@ -593,21 +854,37 @@ function showFeedback() {
 }
 
 function submitFeedback() {
-    // ⚠️ PASTE YOUR GOOGLE APPS SCRIPT URL HERE ⚠️
+    const feedbackText = document.getElementById("feedbackText").value;
+    
+    // Mandatory feedback check
+    if(!feedbackText || feedbackText.trim() === ""){
+        alert("You must enter your feedback to see your marks!");
+        return;
+    }
+
+    // EXACT OLD URL from your working version
     const scriptURL = "https://script.google.com/macros/s/AKfycbzgX71vurxTWwd9LMR8DrYL8gGFVis0gdJMoSZc-zO6Yy9BgM2m9M7ip_jEFNBNToWp/exec";
+    
+    // EXACT OLD DATA PAYLOAD
     const data = {
-        roll: document.getElementById("roll").value, name: state.name, dob: document.getElementById("dob").value,
-        puzzleScore: state.modeScores.PUZZLE, roastScore: state.modeScores.ROAST,
-        rapidScore: state.modeScores.RAPID_FIRE, colorScore: state.modeScores.COLOR_TRAP,
-        totalScore: state.score, feedback: document.getElementById("feedbackText").value
+        roll: document.getElementById("roll").value, 
+        name: state.name, 
+        dob: document.getElementById("dob").value,
+        puzzleScore: state.modeScores.PUZZLE, 
+        roastScore: state.modeScores.ROAST,
+        rapidScore: state.modeScores.RAPID_FIRE, 
+        colorScore: state.modeScores.COLOR_TRAP,
+        totalScore: state.score, 
+        feedback: feedbackText
     };
     
     document.getElementById("final-submit").innerText = "SYNCING...";
     document.getElementById("final-submit").disabled = true;
 
+    // EXACT OLD FETCH REQUEST (Standard text/plain)
     fetch(scriptURL, { 
         method: "POST", 
-        headers: { "Content-Type": "text/plain" }, // Standard text/plain avoids CORS preflight blocking in GAS
+        headers: { "Content-Type": "text/plain" }, 
         body: JSON.stringify(data) 
     }).then(() => {
         showResults();
